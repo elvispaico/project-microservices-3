@@ -3,6 +3,7 @@ package com.bank.service.impl;
 import com.bank.enums.TypeOperation;
 import com.bank.exception.AttributeException;
 import com.bank.exception.ResourceNotFoundException;
+import com.bank.kafka.KafkaProducer;
 import com.bank.model.bean.Operation;
 import com.bank.model.entity.Wallet;
 import com.bank.model.request.OperationRequest;
@@ -24,6 +25,7 @@ import java.util.Optional;
 public class WalletServiceImpl implements WalletService {
 
     private final WalletRepository walletRepository;
+    private final KafkaProducer kafkaProducer;
 
     @Override
     public Mono<Wallet> createWallet(WalletSaveRequest request) {
@@ -52,9 +54,13 @@ public class WalletServiceImpl implements WalletService {
                             ? wallet.getBalance() - request.getAmount()
                             : wallet.getBalance() + request.getAmount();
                     wallet.setBalance(balance);
-                    return wallet.getBalance() >= 0.0
-                            ? walletRepository.save(wallet)
-                            : Mono.error(new AttributeException("insufficient balance"));
+
+                    if (wallet.getBalance() >= 0.0) {
+                        kafkaProducer.send("Operation wallet complet");
+                        return walletRepository.save(wallet);
+                    } else {
+                        return Mono.error(new AttributeException("insufficient balance"));
+                    }
                 });
     }
 
