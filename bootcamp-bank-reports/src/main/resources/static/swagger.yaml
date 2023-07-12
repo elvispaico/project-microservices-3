@@ -1,0 +1,87 @@
+openapi: 3.0.3
+info:
+  title: Bootcamp Api Bank- OpenAPI 3.0
+  description: |-
+    Api Spring boot para adminstracion de entidad bancaria
+
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: epaicaca@nttdata.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+servers:
+  - url: https://localhost:8084/api/v1/bank/reports
+tags:
+  - name: customer
+    description: Administracion de clientes
+
+paths:
+
+
+  /products/customer/{idCustomer}:
+
+    get:
+      summary: Generar un reporte de un cliente
+      description: Genera un reporte de un cliente con todos sus productos
+      operationId: generateReport
+      parameters:
+        - name: idCustomer
+          in: path
+          description: ID del cliente
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportProductResponse'
+
+components:
+  schemas:
+
+    ReportProductResponse:
+      type: object
+      properties:
+        name:
+          type: string
+        document:
+          type: string
+        desTypeCustomer:
+          type: string
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductResponse'
+
+    ProductResponse:
+      type: object
+      properties:
+        id:
+          type: string
+        codTypeProduct:
+          type: string
+        desTypeProduct:
+          type: string
+        codTypeService:
+          type: string
+        desTypeService:
+          type: string
+        balance:
+          type: number
+          format: double
+        commission:
+          type: number
+          format: double
+    MessageResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+    
