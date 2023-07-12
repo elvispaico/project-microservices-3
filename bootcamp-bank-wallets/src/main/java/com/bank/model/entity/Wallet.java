@@ -1,8 +1,11 @@
 package com.bank.model.entity;
 
+import com.bank.model.bean.Operation;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -18,4 +21,5 @@ public class Wallet {
     private String imei;
     private String email;
     private double balance;
+    private List<Operation> operations;
 }

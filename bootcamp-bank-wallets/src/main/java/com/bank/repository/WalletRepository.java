@@ -8,4 +8,6 @@ public interface WalletRepository extends ReactiveMongoRepository<Wallet, String
 
     Mono<Wallet> findByNumDocumentOrNumCellphone(String numDocument,String numCellPhone);
 
+    Mono<Wallet> findByNumCellphone(String nuCellPhone);
+
 }
