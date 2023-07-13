@@ -56,7 +56,7 @@ public class WalletServiceImpl implements WalletService {
                     wallet.setBalance(balance);
 
                     if (wallet.getBalance() >= 0.0) {
-                        kafkaProducer.send("Operation wallet complet");
+                        kafkaProducer.send(wallet, numOperation);
                         return walletRepository.save(wallet);
                     } else {
                         return Mono.error(new AttributeException("insufficient balance"));
