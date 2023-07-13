@@ -1,6 +1,9 @@
 package com.bank.service;
 
+import com.bank.enums.TypeOperation;
+import com.bank.exception.AttributeException;
 import com.bank.model.entity.Wallet;
+import com.bank.model.request.OperationRequest;
 import com.bank.model.request.WalletSaveRequest;
 import com.bank.repository.WalletRepository;
 import com.bank.service.impl.WalletServiceImpl;
@@ -61,5 +64,29 @@ public class WalletServiceTest {
                 .save(Mockito.any(Wallet.class));
     }
 
+    @Test
+    @DisplayName("Crear un nueva operacion con exito")
+    public void createOperation(){
+        String numCellphone = "987654321";
+        OperationRequest request = new OperationRequest();
+        request.setCodTypeOperation(TypeOperation.PAY.getValue());
+        request.setAmount(200.0);
+
+        Wallet wallet = new Wallet();
+        wallet.setNumCellphone(numCellphone);
+        wallet.setBalance(100.0);
+
+        Mockito.when(walletRepository.findByNumCellphone(numCellphone)).thenReturn(Mono.just(wallet));
+
+        Mono<Wallet> result = walletService.saveOperation(numCellphone, request);
+
+        StepVerifier.create(result)
+                .expectError(AttributeException.class)
+                .verify();
+
+        Mockito.verify(walletRepository, Mockito.times(1)).findByNumCellphone(numCellphone);
+        Mockito.verify(walletRepository, Mockito.never()).save(Mockito.any(Wallet.class));
+//        verify(kafkaProducer, never()).send(anyString());
+    }
 
 }
